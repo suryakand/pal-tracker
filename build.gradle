@@ -1,12 +1,41 @@
-plugins {
-    id "java"
-    id "org.springframework.boot" version "1.5.4.RELEASE"
+buildscript {
+    repositories {
+        jcenter()
+        maven { url("http://platform-acceleration-lab-maven.s3.amazonaws.com") }
+    }
+
+    dependencies {
+        classpath("io.pivotal.pal.assignments:assignments-plugin:+")
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.5.2.RELEASE")
+    }
+}
+
+apply plugin: "java"
+apply plugin: "org.springframework.boot"
+apply plugin: "io.pivotal.pal.assignments.plugin"
+
+
+assignments {
+    apiUrl = "https://cognizant-caddy.pal.pivotal.io"
+    email = "suryakand.shinde@cognizant.com"
+    cohortIdentifier = 64
 }
 
 repositories {
-    mavenCentral()
+    jcenter()
 }
 
 dependencies {
     compile("org.springframework.boot:spring-boot-starter-web")
+    testCompile("junit:junit:4.12")
+    testCompile("org.springframework.boot:spring-boot-starter-test")
+    testCompile('org.assertj:assertj-core:3.8.0')
 }
+
+bootRun.environment([
+ "WELCOME_MESSAGE": "hello is from gradel env variable",
+])
+
+test.environment([
+    "WELCOME_MESSAGE": "Hello from test",
+])
