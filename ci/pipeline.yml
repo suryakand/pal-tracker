@@ -1,0 +1,31 @@
+---
+resources:
+- name: pal-tracker
+  type: git
+  source:
+    uri: git@github.com:suryakand/pal-tracker.git
+    branch: master
+    private_key: {{github-private-key}}
+
+- name: deploy
+  type: cf
+  source:
+    api: http://api.system.cumuluslabs.io
+    username: suryakand.shinde@cognizant.com
+    password: d4d34ce5
+    organization: sshinde-Boulder-PAL
+    space: sandbox
+
+jobs:
+- name: build-and-deploy
+  plan:
+  - get: pal-tracker
+    trigger: true
+  - task: build and test
+    file: pal-tracker/ci/build.yml
+  - put: deploy
+    params:
+      manifest: pal-tracker/manifest.yml
+      path: build-output/pal-tracker.jar
+      environment_variables:
+        WELCOME_MESSAGE: "Hello from Concourse"
