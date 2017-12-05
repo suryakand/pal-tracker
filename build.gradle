@@ -27,6 +27,8 @@ repositories {
 
 dependencies {
     compile("org.springframework.boot:spring-boot-starter-web")
+    compile("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.9.1")
+    
     testCompile("junit:junit:4.12")
     testCompile("org.springframework.boot:spring-boot-starter-test")
     testCompile('org.assertj:assertj-core:3.8.0')
