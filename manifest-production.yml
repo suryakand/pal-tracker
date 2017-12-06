@@ -4,4 +4,4 @@ applications:
   path: build/libs/pal-tracker.jar
   host: suryakand-pal-tracker
   services:
-  - tracker-database  
+  - tracker-database
