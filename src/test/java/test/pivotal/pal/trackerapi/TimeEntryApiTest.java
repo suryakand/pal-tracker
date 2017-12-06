@@ -1,13 +1,16 @@
 package test.pivotal.pal.trackerapi;
 
-import com.jayway.jsonpath.DocumentContext;
-import com.mysql.cj.jdbc.MysqlDataSource;
-import io.pivotal.pal.tracker.PalTrackerApplication;
-import io.pivotal.pal.tracker.TimeEntry;
+import static com.jayway.jsonpath.JsonPath.parse;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
+
+import java.time.LocalDate;
+import java.util.Collection;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.embedded.LocalServerPort;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpEntity;
@@ -17,19 +20,20 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.time.LocalDate;
-import java.util.Collection;
+import com.jayway.jsonpath.DocumentContext;
+import com.mysql.cj.jdbc.MysqlDataSource;
 
-import static com.jayway.jsonpath.JsonPath.parse;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
+import io.pivotal.pal.tracker.PalTrackerApplication;
+import io.pivotal.pal.tracker.TimeEntry;
+import test.pivotal.pal.util.PalTestUtils;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = PalTrackerApplication.class, webEnvironment = RANDOM_PORT)
 public class TimeEntryApiTest {
 
-    @Autowired
-    private TestRestTemplate restTemplate;
+	@LocalServerPort
+	private String port;
+	private TestRestTemplate restTemplate;
 
     private TimeEntry timeEntry = new TimeEntry(123, 456, LocalDate.parse("2017-01-08"), 8);
 
@@ -40,6 +44,8 @@ public class TimeEntryApiTest {
 
         JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
         jdbcTemplate.execute("TRUNCATE time_entries");
+        
+        restTemplate = PalTestUtils.getTestRestTemplate(port);
     }
 
     @Test
